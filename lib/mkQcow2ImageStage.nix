@@ -1,4 +1,8 @@
-{ pkgs, stdenv, vmTools }:
+{
+  pkgs,
+  stdenv,
+  vmTools,
+}:
 {
   pname,
   version ? "",
@@ -37,33 +41,33 @@ let
   '';
 
   runScript =
-    if logOutput then
-      "${script}/build.sh > /tmp/xchg/build.log 2>&1"
-    else
-      "${script}/build.sh";
+    if logOutput then "${script}/build.sh > /tmp/xchg/build.log 2>&1" else "${script}/build.sh";
 
-  stageDerivation = stdenv.mkDerivation ({
-    inherit pname version memSize;
+  stageDerivation = stdenv.mkDerivation (
+    {
+      inherit pname version memSize;
 
-    preVM = ''
-      mkdir -p $out
-      diskImage=$out/OS.img
-      ${createImage}
-      ${prepareLog}
-    '';
+      preVM = ''
+        mkdir -p $out
+        diskImage=$out/OS.img
+        ${createImage}
+        ${prepareLog}
+      '';
 
-    buildCommand = ''
-      ${vmSetup}
-      ${runScript}
+      buildCommand = ''
+        ${vmSetup}
+        ${runScript}
 
-      mkdir -p $out/nix-support
-      ${lib.optionalString (previousImage != null) ''
-        echo ${previousImage}/OS.img > $out/nix-support/backing_image
-      ''}
-      ${lib.optionalString (debInputs != [ ]) ''
-        echo ${toString debInputs} > $out/nix-support/deb-inputs
-      ''}
-    '';
-  } // env);
+        mkdir -p $out/nix-support
+        ${lib.optionalString (previousImage != null) ''
+          echo ${previousImage}/OS.img > $out/nix-support/backing_image
+        ''}
+        ${lib.optionalString (debInputs != [ ]) ''
+          echo ${toString debInputs} > $out/nix-support/deb-inputs
+        ''}
+      '';
+    }
+    // env
+  );
 in
 vmTools.runInLinuxVM stageDerivation

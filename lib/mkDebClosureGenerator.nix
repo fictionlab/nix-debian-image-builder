@@ -1,5 +1,9 @@
 { lib, pkgs }:
-{ name, packageLists, packages }:
+{
+  name,
+  packageLists,
+  packages,
+}:
 let
   inherit (pkgs) buildPackages runCommand;
 in
@@ -30,8 +34,10 @@ runCommand "${name}.nix"
     )}
 
     perl -w ${./deb-closure.pl} \
-      ${toString (
-        lib.lists.forEach packageLists (list: "--package-list ./Packages-${list.name},${list.urlPrefix}")
-      )} \
+      ${
+        toString (
+          lib.lists.forEach packageLists (list: "--package-list ./Packages-${list.name},${list.urlPrefix}")
+        )
+      } \
       -- ${toString packages} > $out
   ''

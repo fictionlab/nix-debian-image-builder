@@ -9,7 +9,8 @@
   qemuImg ? pkgs.buildPackages.qemu_kvm,
 }:
 let
-  buildStages = previousImage: remainingStages:
+  buildStages =
+    previousImage: remainingStages:
     if remainingStages == [ ] then
       [ ]
     else
@@ -34,6 +35,7 @@ let
           name = stage.outputName or stage.name;
           value = stageImage;
         }
-      ] ++ buildStages stageImage (builtins.tail remainingStages);
+      ]
+      ++ buildStages stageImage (builtins.tail remainingStages);
 in
 builtins.listToAttrs (buildStages null stages)

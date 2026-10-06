@@ -1,19 +1,32 @@
-{ pkgs, stdenv, makeWrapper }:
-{ name, src, packages, environment ? { } }:
+{
+  pkgs,
+  stdenv,
+  makeWrapper,
+}:
+{
+  name,
+  src,
+  packages,
+  environment ? { },
+}:
 let
   inherit (pkgs) lib;
   wrapperArgs = [
     "--set PATH ${lib.escapeShellArg (lib.makeBinPath packages)}"
     "--set NIX_STORE_DIR ${lib.escapeShellArg builtins.storeDir}"
-  ] ++ lib.mapAttrsToList
-    (key: value: "--set ${key} ${lib.escapeShellArg (toString value)}")
-    environment;
+  ]
+  ++ lib.mapAttrsToList (
+    key: value: "--set ${key} ${lib.escapeShellArg (toString value)}"
+  ) environment;
 in
 stdenv.mkDerivation {
   inherit name;
   inherit src;
   nativeBuildInputs = [ makeWrapper ];
-  phases = [ "installPhase" "postFixup" ];
+  phases = [
+    "installPhase"
+    "postFixup"
+  ];
 
   installPhase = ''
     mkdir -p $out
