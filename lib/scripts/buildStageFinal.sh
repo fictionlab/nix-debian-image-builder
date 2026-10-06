@@ -10,10 +10,12 @@ mkdir /mnt
 mount -t ext4 "$DISK"2 /mnt
 mount -t vfat "$DISK"1 "/mnt${BOOT_MOUNT}"
 
-# Set the OS name, version, and variant
-sed -i "s|@OS_NAME@|${OSName}|g" /mnt/etc/custom-os-release
-sed -i "s|@OS_VERSION@|${OSVersion}|g" /mnt/etc/custom-os-release
-sed -i "s|@OS_VARIANT@|${OSVariant}|g" /mnt/etc/custom-os-release
+# Write the OS name, version, and variant
+cat > /mnt/etc/custom-os-release <<EOF
+OS_NAME="${OSName}"
+OS_VERSION="${OSVersion}"
+OS_VARIANT="${OSVariant}"
+EOF
 
 # Remove backup files
 find "/mnt/etc" -type f -name "*-" -exec rm -v {} \;
