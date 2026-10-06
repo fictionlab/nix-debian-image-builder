@@ -8,7 +8,7 @@
   script,
   debInputs ? [ ],
   vmSetup ? "",
-  logOutput ? false,
+  logOutput ? true,
   env ? { },
   qemuImg ? pkgs.buildPackages.qemu_kvm,
 }:

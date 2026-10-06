@@ -179,7 +179,7 @@ Arguments:
 | `script` | Yes | | Wrapped script derivation containing `build.sh`. |
 | `debInputs` | No | `[ ]` | Package paths recorded in `nix-support/deb-inputs`. |
 | `vmSetup` | No | `""` | Shell setup run inside the VM before the script. |
-| `logOutput` | No | `false` | Capture and forward script output through the VM log. |
+| `logOutput` | No | `true` | Capture and forward script output through the VM log. |
 | `env` | No | `{ }` | Additional derivation environment attributes available to the script. |
 | `qemuImg` | No | `pkgs.buildPackages.qemu_kvm` | Package providing `qemu-img`. |
 
@@ -221,7 +221,7 @@ Optional stage arguments are:
 | `memSize` | Chain `memSize` | VM memory size in MiB. |
 | `debInputs` | `[ ]` | Package paths recorded in `nix-support/deb-inputs`. |
 | `vmSetup` | Chain `vmSetup` or `""` | Shell setup run before the stage script. |
-| `logOutput` | Chain `logOutput` or `false` | Whether to capture and forward script output. |
+| `logOutput` | Chain `logOutput` or `true` | Whether to capture and forward script output. |
 | `env` | `{ }` | Extra derivation environment attributes for the stage. |
 | `qemuImg` | Chain `qemuImg` or `pkgs.buildPackages.qemu_kvm` | Package providing `qemu-img`. |
 

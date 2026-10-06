@@ -5,7 +5,7 @@
   imageSize,
   stages,
   vmSetup ? "",
-  logOutput ? false,
+  logOutput ? true,
   qemuImg ? pkgs.buildPackages.qemu_kvm,
 }:
 let
