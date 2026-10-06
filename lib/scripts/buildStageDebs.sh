@@ -4,22 +4,13 @@ source "$NIX_ATTRS_SH_FILE"
 
 DISK=/dev/vda
 BOOT_MOUNT="${BOOT_MOUNT:?BOOT_MOUNT must be set}"
-CLEAN_CHROOT_ENV="${CLEAN_CHROOT_ENV:-false}"
 
-if [[ "$CLEAN_CHROOT_ENV" == true ]]; then
-    my_chroot() {
-        env -i \
-        DEBIAN_FRONTEND=noninteractive \
-        PATH=/usr/bin:/bin:/usr/sbin:/sbin \
-        "$(type -tP chroot)" "$@"
-    }
-else
-    my_chroot() {
-        DEBIAN_FRONTEND=noninteractive \
-        PATH=/usr/bin:/bin:/usr/sbin:/sbin \
-        "$(type -tP chroot)" "$@"
-    }
-fi
+my_chroot() {
+    env -i \
+    DEBIAN_FRONTEND=noninteractive \
+    PATH=/usr/bin:/bin:/usr/sbin:/sbin \
+    "$(type -tP chroot)" "$@"
+}
 
 # Mount everything to /mnt and provide some directories needed later on
 mkdir /mnt
