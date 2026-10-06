@@ -5,8 +5,8 @@
   osVersion,
   variant,
   filename ? "${osName}-${osVersion}-${variant}.img",
-  additionalSectors ? 1,
-  repairGpt ? false,
+  additionalSectors ? 34, # Minimum for a backup GPT table
+  repairGpt ? true,
 }:
 stdenv.mkDerivation {
   pname = "${osName}-${variant}-raw-image";

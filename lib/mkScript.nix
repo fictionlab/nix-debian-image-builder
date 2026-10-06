@@ -4,7 +4,7 @@ let
   inherit (pkgs) lib;
   wrapperArgs = [
     "--set PATH ${lib.escapeShellArg (lib.makeBinPath packages)}"
-    "--set NIX_STORE_DIR ${lib.escapeShellArg (toString pkgs.storeDir)}"
+    "--set NIX_STORE_DIR ${lib.escapeShellArg builtins.storeDir}"
   ] ++ lib.mapAttrsToList
     (key: value: "--set ${key} ${lib.escapeShellArg (toString value)}")
     environment;
