@@ -85,10 +85,19 @@ Arguments:
 
 `packagesFile` can be an `.xz`, `.lzma`, `.bz2`, or `.gz` index. `urlPrefix` is
 prepended to each package's repository-relative `Filename` when the closure is
-generated. The imported result is nested by installation stage and dependency
-component. Select one stage, for example `builtins.elemAt debsClosure 1`, and
-pass it to a VM stage as the `debsStage` environment attribute expected by the
-install script.
+generated. The imported result is a list of stages; each stage is a list of
+strings, with one string per dependency component. Each string contains the
+space-separated store paths for the component's `.deb` files. For example:
+
+```nix
+[
+  [ "/nix/store/a.deb /nix/store/b.deb" "/nix/store/c.deb" ]
+  [ "/nix/store/d.deb" ]
+]
+```
+
+Select one stage with `builtins.elemAt debsClosure 1` and pass it to a VM stage
+as the `debsStage` environment attribute expected by the install script.
 
 ## Stage Scripts
 

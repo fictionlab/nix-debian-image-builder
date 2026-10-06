@@ -154,7 +154,7 @@ foreach my $pkgName (@toplevelPkgs) {
 print "# This is a generated file.  Do not modify!\n";
 print "# Following are the Debian packages constituting the closure of: @toplevelPkgs\n\n";
 print "{fetchurl}:\n\n";
-print "[\n\n";
+print "map (map toString) [\n\n";
 print "  [\n\n";
 print "    [\n\n";
 
