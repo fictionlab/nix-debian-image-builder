@@ -1,0 +1,58 @@
+#!/usr/bin/env bash -e
+
+source "$NIX_ATTRS_SH_FILE"
+
+DISK=/dev/vda
+BOOT_MOUNT="${BOOT_MOUNT:?BOOT_MOUNT must be set}"
+CLEAN_CHROOT_ENV="${CLEAN_CHROOT_ENV:-false}"
+
+if [[ "$CLEAN_CHROOT_ENV" == true ]]; then
+    my_chroot() {
+        env -i \
+        DEBIAN_FRONTEND=noninteractive \
+        PATH=/usr/bin:/bin:/usr/sbin:/sbin \
+        "$(type -tP chroot)" "$@"
+    }
+else
+    my_chroot() {
+        DEBIAN_FRONTEND=noninteractive \
+        PATH=/usr/bin:/bin:/usr/sbin:/sbin \
+        "$(type -tP chroot)" "$@"
+    }
+fi
+
+# Mount everything to /mnt and provide some directories needed later on
+mkdir /mnt
+mount -t ext4 "$DISK"2 /mnt
+mkdir -p /mnt/{proc,dev,sys} "/mnt${BOOT_MOUNT}"
+mount -t vfat "$DISK"1 "/mnt${BOOT_MOUNT}"
+mount -o bind /proc /mnt/proc
+mount -o bind /dev /mnt/dev
+mount -o bind /dev/pts /mnt/dev/pts
+mount -t sysfs sysfs /mnt/sys
+
+# Make the Nix store available in /mnt, because that's where the .debs are.
+mkdir -p /mnt/inst${NIX_STORE_DIR}
+mount -o bind ${NIX_STORE_DIR} /mnt/inst${NIX_STORE_DIR}
+
+echo "Installing Debs..."
+
+for component in "${debsStage[@]}"; do
+    echo
+    echo ">>> INSTALLING COMPONENT: $component"
+    debs=
+    for i in $component; do
+        debs="$debs /inst$i"
+    done
+
+    my_chroot /mnt dpkg --install $debs < /dev/null
+done
+
+# Unmount everything
+umount /mnt/inst${NIX_STORE_DIR}
+umount "/mnt${BOOT_MOUNT}"
+umount /mnt/sys
+umount /mnt/proc
+umount /mnt/dev/pts
+umount /mnt/dev
+umount /mnt
